@@ -3,10 +3,31 @@ import { fetchDepartments } from '../../utils/EmployeeHelper'
 
 const Add = () => {
   const [departments,setDepartments]= useState([])
+
+  const [formData,setFormData]= useState({})
+
+
+
+
+
 useEffect(() => {
-fetchDepartments
+  const getDepartments=async () =>{
+   const departments=  await fetchDepartments()
+   setDepartments(departments)
+  }
+  getDepartments();
 },[])
 
+const handleChange=(e)=>{
+  const {name , value , files}= e.target
+  if(name==="image")
+  {
+    setFormData((prevData)=>({...prevData, [name]: files[0]}))
+  }
+  else{
+    setFormData((prevData)=>({...prevData, [name]: value}))
+  }
+}
 
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-md shadow-md">
@@ -21,8 +42,8 @@ fetchDepartments
         <input
           type="text"
           name="name"
+          onChange={handleChange}
           placeholder='Insert Name'
-        //   onChange={handleChange}
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           required
         />
@@ -36,6 +57,7 @@ fetchDepartments
         <input
           type="email"
           name="email"
+          onchange={handleChange}
           placeholder='Insert Email'
           className="mt-1 w-full p-2 border border-gray-300 rounded-md"
           required
@@ -52,7 +74,7 @@ fetchDepartments
           type="text"
           name="employeeId"
           placeholder='Employee ID'
-        //   onChange={handleChange}
+          onChange={handleChange}
           className="mt-1 w-full p-2 border border-gray-300 rounded-md"
           required
         />
@@ -67,7 +89,7 @@ fetchDepartments
             type="date"
             name="dob"
             placeholder='YYYY-MM-DD'
-            // onChange={handleChange}
+            onChange={handleChange}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             required
           />
@@ -77,6 +99,7 @@ fetchDepartments
         <label className="block text-sm font-medium text-gray-700">Gender:</label>
          <select 
          name="gender"
+         onChange={handleChange}
          className='mt-1 w-full p-2 block border border-gray-300 rounded-md'
         required>
           <option value="">Select Gender</option>
@@ -95,7 +118,7 @@ fetchDepartments
           name="maritalStatus"
           placeholder="Marital Status"
           // value={employee.maritalStatus}
-          // onChange={handleChange}
+          onChange={handleChange}
           className="mt-1 w-full p-2 border border-gray-300 rounded-md"
           required
         >
@@ -114,7 +137,7 @@ fetchDepartments
           name="designation"
           placeholder='Designation'
           // value={employee.designation}
-          // onChange={handleChange}
+          onChange={handleChange}
           className="mt-1 w-full p-2 border border-gray-300 rounded-md"
           required
         />
@@ -125,24 +148,14 @@ fetchDepartments
           Department:
         </label>
         <select
-        name="department"
+        name="deparment"
+        onChange={handleChange}
         className='mt-1 w-full p-2 block border border-gray-300 rounded-md'
         required>
           <option value="">Select Department</option>
-          <option value="IT">IT</option>
-          <option value="HR">HR</option>
-          <option value="Finance">Finance</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Sales">Sales</option>
-          <option value="Admin">Admin</option>
-
-          {/* <option value={department.dep_id}>{department.dep_name}</option> */}
-
-          {/* {departments.map((department) => (
-            <option key={department.dep_id} value={department.dep_id}>
-              {department.dep_name}
-            </option>
-          ))} */}
+          {departments.map((dep)=>(
+            <option key={dep._id} value={dep._id}>{dep.dep_name}</option>
+          ))}
 
         </select>
       
@@ -157,7 +170,7 @@ fetchDepartments
           name="salary"
           placeholder='Salary'
           // value={employee.salary}
-          // onChange={handleChange}
+          onChange={handleChange}
           className="mt-1 w-full p-2 border border-gray-300 rounded-md"
           required
         />
@@ -172,7 +185,7 @@ fetchDepartments
           name="password"
           placeholder='*********'
           // value={employee.password}
-          // onChange={handleChange}
+          onChange={handleChange}
           className="mt-1 w-full p-2 border border-gray-300 rounded-md"
           required
         />
@@ -199,7 +212,7 @@ fetchDepartments
         <input
           type="file"
           name="image"
-          // onChange={handleFileChange}
+          onChange={handleFileChange}
           placeholder='Upload image'
           accept='image/*'
           className="mt-1 w-full p-2 block border border-gray-300 rounded-md"

@@ -33,13 +33,17 @@ const handleChange=(e)=>{
 
     const handleSubmit = async (e) => {
       e.preventDefault();
- con
+      
       // Ensure token exists
       // const token = localStorage.getItem('token');
       // if (!token) {
       //   alert('Token is missing');
       //   return;
       // }
+      const formDataObj = new FormData()
+      Object.keys(formData).forEach((key)=> {
+        formDataObj.append(key, formData[key])
+      })
   
       try {
         const response = await axios.post(

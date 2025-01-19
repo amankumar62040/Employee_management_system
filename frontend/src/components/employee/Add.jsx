@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { fetchDepartments } from '../../utils/EmployeeHelper'
-
+import axios from 'axios'
 const Add = () => {
   const [departments,setDepartments]= useState([])
 
@@ -27,12 +27,61 @@ const handleChange=(e)=>{
   else{
     setFormData((prevData)=>({...prevData, [name]: value}))
   }
+  
 }
+
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+ con
+      // Ensure token exists
+      // const token = localStorage.getItem('token');
+      // if (!token) {
+      //   alert('Token is missing');
+      //   return;
+      // }
+  
+      try {
+        const response = await axios.post(
+          'http://localhost:5000/api/departments/add',
+          department,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          }
+        );
+        
+  
+        if (response.data.success) {
+          // Redirect to departments page if success
+          navigate('/admin-dashboard/departments');
+        }
+      } catch (error) {
+        // Log the error for debugging
+  
+        if (error.response && !error.response.data.success) {
+          alert(error.response.data.error);
+        }
+      }
+    };
+  
+  
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-md shadow-md">
     <h2 className="text-2xl font-bold mb-6">Add New Employee</h2>
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Name */}
         <div>
@@ -197,6 +246,7 @@ const handleChange=(e)=>{
         </label>
         <select
         name="role"
+        onChange={handleChange}
         className='mt-1 w-full p-2 block border border-gray-300 rounded-md'
         required>
           <option value="">Select Role</option>
@@ -212,7 +262,7 @@ const handleChange=(e)=>{
         <input
           type="file"
           name="image"
-          onChange={handleFileChange}
+          onChange={handleChange}
           placeholder='Upload image'
           accept='image/*'
           className="mt-1 w-full p-2 block border border-gray-300 rounded-md"

@@ -27,7 +27,7 @@ const List = () => {
             dep_name: emp.department.dep_name,
             name: emp.userId.name,
             dob: new Date(emp.dob).toDateString(),
-            profileImage: emp.userId.profileImage,
+            profileImage:<img  width ={40} className="rounded-full"src={`http://localhost:5000/${emp.userId.profileImage}`}/>,
             action: <EmployeeButtons Id={emp._id} />,
           }));
           setEmployees(data);

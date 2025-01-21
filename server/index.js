@@ -23,7 +23,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/public', express.static(path.join(process.cwd(), 'public')));
-
+app.use(express.static('public/uploads'))
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/departments', departmentRouter);

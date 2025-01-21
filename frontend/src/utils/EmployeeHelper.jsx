@@ -6,34 +6,35 @@ export const columns = [
   {
     name: 'S No',
     selector: (row) => row.sno,
-    sortable: true,
+    width: "70px"
   },
   {
     name: 'Name',
     selector: (row) => row.name,
     sortable: true,
+    width: "100px"
   },
   {
     name: 'Image',
-    selector: (row) => <img src={row.profileImage} alt="Profile" width={50} height={50} />,
-    sortable: true,
+    selector: (row) => row.profileImage,
+    width: "90px"
   },
   {
     name: 'Department',
     selector: (row) => row.dep_name,
-    sortable: true,
+    width: "120px"
   },
   {
     name: 'DOB',
     selector: (row) => row.dob,
-    sortable: true,
+    width: "130px"
   },
   {
     name: 'Actions',
     selector: (row) => row.action,
-    ignoreRowClick: true,
-    allowOverflow: true,
-    button: true,
+    center: "true",
+    // allowOverflow: true,
+    // button: true,
   },
 ];
 
@@ -69,3 +70,30 @@ export const EmployeeButtons = ({ Id }) => {
     </div>
   );
 };
+
+
+
+
+export const fetchDepartments = async () => {
+    let departments = [];
+    try {
+        const response = await axios.get('http://localhost:5000/api/departments', {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+
+        if (response.data.success) {
+            departments = response.data.departments;
+        }
+    } catch (error) {
+        if (error.response && !error.response.data.success) {
+            alert(error.response.data.error);
+        }
+    }
+    return departments;
+};
+
+
+
+  

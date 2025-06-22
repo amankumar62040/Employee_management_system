@@ -27,7 +27,9 @@ export const columns = [
   {
     name: 'DOB',
     selector: (row) => row.dob,
+    sortable: true,
     width: "130px"
+    
   },
   {
     name: 'Actions',
@@ -45,13 +47,13 @@ export const EmployeeButtons = ({ Id }) => {
     <div className="flex space-x-3">
       <button
         className="bg-blue-600 hover:bg-blue-900 text-white font-bold py-1 px-3 rounded-md"
-        onClick={() => navigate(`/admin-dashboard/employee/${Id}`)}
+        onClick={() => navigate(`/admin-dashboard/employees/${Id}`)}
       >
         View
       </button>
       <button
         className="bg-green-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded-md"
-        onClick={() => navigate(`/admin-dashboard/edit-employee/${Id}`)}
+        onClick={() => navigate(`/admin-dashboard/employees/edit/${Id}`)}
       >
         Edit
       </button>

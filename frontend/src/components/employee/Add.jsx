@@ -205,7 +205,7 @@ const Add = () => {
               required
             >
               <option value="">Select Role</option>
-              <option value="Manager">Admin</option>
+              <option value="admin">Admin</option>
               <option value="Employee">Employee</option>
             </select>
           </div>

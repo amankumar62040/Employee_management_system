@@ -8,6 +8,7 @@ import axios from 'axios';
 const List = () => {
   const [employees, setEmployees] = useState([]);
   const [empLoading, setEmpLoading] = useState(false);
+  const [filteredEmployee, setFilteredEmployees] = useState([]);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -20,17 +21,29 @@ const List = () => {
         });
 
         if (response.data.success) {
-          let sno = 1; // Initialize the sno variable
+          let sno = 1;
           const data = response.data.employees.map((emp) => ({
             _id: emp._id,
-            sno: sno++, // Increment sno for each department
-            dep_name: emp.department.dep_name,
+            sno: sno++,
+            dep_name: emp.department?.dep_name || "N/A",
             name: emp.userId.name,
-            dob: new Date(emp.dob).toDateString(),
-            profileImage:<img  width ={40} className="rounded-full"src={`http://localhost:5000/${emp.userId.profileImage}`}/>,
+            dob: new Date(emp.dob).toLocaleDateString(),
+            profileImage: (
+              <img
+                width={40}
+                className="rounded-full object-cover"
+                src={`http://localhost:5000/uploads/${emp.userId.profileImage}`}
+                alt="profile"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://via.placeholder.com/40";
+                }}
+              />
+            ),
             action: <EmployeeButtons Id={emp._id} />,
           }));
           setEmployees(data);
+          setFilteredEmployees(data);
         }
       } catch (error) {
         if (error.response && !error.response.data.success) {
@@ -44,16 +57,25 @@ const List = () => {
     fetchEmployees();
   }, []);
 
+  const handleFilter = (e) => {
+    const keyword = e.target.value.toLowerCase();
+    const records = employees.filter((emp) =>
+      emp.name.toLowerCase().includes(keyword)
+    );
+    setFilteredEmployees(records);
+  };
+
   return (
     <div className="p-6">
       <div className="text-center">
         <h3 className="text-2xl font-bold">Manage Employee</h3>
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-2">
         <input
           type="text"
           placeholder="Search by Dep Name"
           className="px-4 py-0.5 border"
+          onChange={handleFilter}
         />
         <Link
           to="/admin-dashboard/add-employee"
@@ -63,7 +85,12 @@ const List = () => {
         </Link>
       </div>
       <div>
-        <DataTable columns={columns} data={employees} progressPending={empLoading} />
+        <DataTable
+          columns={columns}
+          data={filteredEmployee}
+          progressPending={empLoading}
+          pagination
+        />
       </div>
     </div>
   );

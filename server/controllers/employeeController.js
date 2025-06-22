@@ -3,6 +3,7 @@ import Employee from '../models/Employee.js';
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 import Path from 'path';
+// import Department from '../models/Department.js';
 
 // Multer storage configuration
 const storage = multer.diskStorage({
@@ -36,9 +37,7 @@ const addEmployee = async (req, res) => {
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, error: 'User already registered' });
+      return res.status(400).json({ success: false, error: 'User already registered' });
     }
 
     // Hash password
@@ -70,23 +69,62 @@ const addEmployee = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Employee created' });
   } catch (error) {
     console.error(error.message);
-    return res
-      .status(500)
-      .json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
 
+const getEmployees = async (req, res) => {
+  try {
+    const employees = await Employee.find()
+      .populate('userId', { password: 0 })
+      .populate('department'); // <- Ensure department is populated
 
+    return res.status(200).json({ success: true, employees });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: 'Server error: Unable to fetch employees' });
+  }
+};
 
-const getEmployee=async(req,res) => {
-    try {
-        const employees = await Employee.find().populate('userId', {password: 0}).populate("department");
-        return res.status(200).json({ success: true, employees });
-      } catch (error) {
-        return  res.status(500).json({ success: false, error: "Server error: Unable to fetch employees" });
-      }
-}
+const getEmployee = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const employee = await Employee.findById(id)
+      .populate('userId', { password: 0 })
+      .populate('department');
+    return res.status(200).json({ success: true, employee });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: 'Server error: Unable to fetch employee' });
+  }
+};
 
+const updateEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, maritalStatus, designation, department, salary } = req.body;
 
+    const employee = await Employee.findById(id);
+    if (!employee) return res.status(404).json({ success: false, error: 'Employee not found' });
 
-export { addEmployee, upload , getEmployee};
+    const user = await User.findById(employee.userId);
+    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+
+    const updatedUser = await User.findByIdAndUpdate(employee.userId, { name }, { new: true });
+    const updatedEmployee = await Employee.findByIdAndUpdate(
+      id,
+      { maritalStatus, designation, department, salary },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Employee updated successfully',
+      updatedUser,
+      updatedEmployee,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: 'Server error while updating employee' });
+  }
+};
+
+export { addEmployee, upload, getEmployees, getEmployee, updateEmployee };

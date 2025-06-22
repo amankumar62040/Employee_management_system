@@ -22,8 +22,10 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use('/public', express.static(path.join(process.cwd(), 'public')));
-app.use(express.static('public/uploads'))
+
+// ✅ Correct static path to serve employee images
+app.use('/uploads', express.static(path.join(process.cwd(), 'public/uploads')));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/departments', departmentRouter);
